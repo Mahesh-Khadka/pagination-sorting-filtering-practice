@@ -11,16 +11,6 @@ Each product has the following fields:
 - **category**: Category of the product (e.g., Laptop, Mobile)
 - **price**: Price of the product
 
-Example:
-
-```json
-{
-  "id": 1,
-  "name": "Acer Laptop",
-  "category": "Laptop",
-  "price": 980000
-}
-
 Features
 
 Pagination - Load data in pages instead of all at once.
