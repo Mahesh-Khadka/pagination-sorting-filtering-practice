@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Pagination Example</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        table { border-collapse: collapse; width: 60%; margin-bottom: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        button { padding: 6px 12px; margin: 5px; cursor: pointer; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+<h2>📦 Product List (Paginated)</h2>
+<table id="productTable">
+    <thead>
+    <tr>
+        <th>ID</th><th>Name</th><th>Category</th><th>Price</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<div>
+    <button id="prevBtn">⬅ Prev</button>
+    <span id="pageInfo"></span>
+    <button id="nextBtn">Next ➡</button>
+</div>
+
+<script>
+    let currentPage = 0;
+    const pageSize = 2; // how many per page
+    const apiUrl = "http://localhost:8083/api/products";
+
+    async function loadProducts(page) {
+      const response = await fetch(`${apiUrl}?page=${page}&size=${pageSize}`);
+      const data = await response.json();
+
+      const tbody = document.querySelector("#productTable tbody");
+      tbody.innerHTML = "";
+
+      data.content.forEach(p => {
+        const row = `<tr>
+            <td>${p.id}</td>
+            <td>${p.name}</td>
+            <td>${p.category}</td>
+            <td>${p.price}</td>
+          </tr>`;
+        tbody.insertAdjacentHTML("beforeend", row);
+      });
+
+      // update buttons
+      document.getElementById("prevBtn").disabled = data.first;
+      document.getElementById("nextBtn").disabled = data.last;
+      document.getElementById("pageInfo").innerText =
+        `Page ${data.number + 1} of ${data.totalPages}`;
+    }
+
+    // event listeners
+    document.getElementById("prevBtn").addEventListener("click", () => {
+      if (currentPage > 0) {
+        currentPage--;
+        loadProducts(currentPage);
+      }
+    });
+
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      currentPage++;
+      loadProducts(currentPage);
+    });
+
+    // initial load
+    loadProducts(currentPage);
+</script>
+
+</body>
+</html>
